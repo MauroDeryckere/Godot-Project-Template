@@ -4,5 +4,5 @@ project(GodotCppTemplate)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add godot-cpp
 add_subdirectory(third_party/godot-cpp)
+add_subdirectory(cpp)
