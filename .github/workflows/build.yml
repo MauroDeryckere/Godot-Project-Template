@@ -1,0 +1,122 @@
+name: Build Binaries
+
+# Builds the extension for all platforms and collects binaries as a downloadable artifact.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            preset: release
+          - os: windows-latest
+            preset: release
+          - os: macos-latest
+            preset: release
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Configure
+        run: cmake --preset release
+
+      - name: Build
+        run: cmake --build --preset release
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.os }}
+          path: godot/bin/*
+          if-no-files-found: error
+
+  android:
+    name: Android (${{ matrix.abi }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [arm64, arm32, x86_64]
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Configure
+        run: cmake --preset android-${{ matrix.abi }}
+
+      - name: Build
+        run: cmake --build --preset android-${{ matrix.abi }}
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin-android-${{ matrix.abi }}
+          path: godot/bin/android/**/*
+          if-no-files-found: error
+
+  ios:
+    name: iOS (arm64)
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Configure
+        run: cmake --preset ios
+
+      - name: Build
+        run: cmake --build --preset ios
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin-ios
+          path: godot/bin/ios/**/*
+          if-no-files-found: error
+
+  collect:
+    name: Collect Binaries
+    runs-on: ubuntu-latest
+    needs: [desktop, android, ios]
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: bin
+          pattern: bin-*
+          merge-multiple: true
+
+      - name: Upload combined artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-binaries
+          path: bin/
