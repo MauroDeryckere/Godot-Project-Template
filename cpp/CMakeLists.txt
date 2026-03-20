@@ -10,15 +10,13 @@ target_include_directories(myextension PRIVATE
 )
 
 
-target_link_libraries(myextension
+target_link_libraries(myextension PRIVATE
     godot-cpp
 )
 
 # Output directly to Godot project
 add_custom_command(TARGET myextension POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
     $<TARGET_FILE:myextension>
-    ${CMAKE_SOURCE_DIR}/godot/bin/
+    ${PROJECT_SOURCE_DIR}/godot/bin/
 )
-
-    
