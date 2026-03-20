@@ -14,6 +14,12 @@ target_link_libraries(myextension PRIVATE
     godot-cpp
 )
 
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set_target_properties(myextension PROPERTIES
+        XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
+    )
+endif()
+
 # Determine output directory based on platform
 if(ANDROID)
     set(BIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/godot/bin/android/${ANDROID_ABI})
@@ -31,7 +37,7 @@ add_custom_command(TARGET myextension POST_BUILD
     ${BIN_OUTPUT_DIR}/
 )
 
-if(WIN32)
+if(MSVC)
     add_custom_command(TARGET myextension POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_PDB_FILE:myextension>
