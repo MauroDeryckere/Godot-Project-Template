@@ -3,5 +3,9 @@ entry_symbol = "my_extension_init"
 compatibility_minimum = "4.2"
 
 [libraries]
+linux.debug.x86_64 = "res://../bin/libmyextension.so"
+linux.release.x86_64 = "res://../bin/libmyextension.so"
 windows.debug.x86_64 = "res://../bin/myextension.dll"
 windows.release.x86_64 = "res://../bin/myextension.dll"
+macos.debug = "res://../bin/libmyextension.dylib"
+macos.release = "res://../bin/libmyextension.dylib"
