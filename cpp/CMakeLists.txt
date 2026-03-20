@@ -2,7 +2,10 @@ file(GLOB_RECURSE SRC CONFIGURE_DEPENDS src/*.cpp)
 
 add_library(myextension SHARED ${SRC})
 
-target_include_directories(myextension PUBLIC
+target_compile_features(myextension PRIVATE cxx_std_20)
+set_target_properties(myextension PROPERTIES CXX_EXTENSIONS OFF)
+
+target_include_directories(myextension PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
