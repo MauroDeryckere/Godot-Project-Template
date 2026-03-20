@@ -33,6 +33,12 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache godot-cpp build
+        uses: actions/cache@v5
+        with:
+          path: build/release
+          key: godot-cpp-${{ matrix.os }}-Release-${{ hashFiles('third_party/godot-cpp/**') }}
+
       - name: Configure
         run: cmake --preset release
 
@@ -60,6 +66,12 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache godot-cpp build
+        uses: actions/cache@v5
+        with:
+          path: build/android-${{ matrix.abi }}
+          key: godot-cpp-android-${{ matrix.abi }}-${{ hashFiles('third_party/godot-cpp/**') }}
+
       - name: Configure
         run: cmake --preset android-${{ matrix.abi }}
 
@@ -82,6 +94,12 @@ jobs:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
+
+      - name: Cache godot-cpp build
+        uses: actions/cache@v5
+        with:
+          path: build/ios
+          key: godot-cpp-ios-${{ hashFiles('third_party/godot-cpp/**') }}
 
       - name: Configure
         run: cmake --preset ios
