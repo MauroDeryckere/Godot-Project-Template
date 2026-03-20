@@ -22,7 +22,7 @@ void uninitialize(ModuleInitializationLevel level)
 
 extern "C"
 {
-    GDExtensionBool GDE_EXPORT my_extension_init(
+    GDExtensionBool GDE_EXPORT myextension_init(
         GDExtensionInterfaceGetProcAddress get_proc_address,
         GDExtensionClassLibraryPtr library,
         GDExtensionInitialization* initialization)
