@@ -20,3 +20,11 @@ add_custom_command(TARGET myextension POST_BUILD
     $<TARGET_FILE:myextension>
     ${PROJECT_SOURCE_DIR}/godot/bin/
 )
+
+if(WIN32)
+    add_custom_command(TARGET myextension POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_PDB_FILE:myextension>
+        ${PROJECT_SOURCE_DIR}/godot/bin/
+    )
+endif()
