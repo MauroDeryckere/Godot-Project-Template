@@ -6,9 +6,22 @@ compatibility_minimum = "4.2"
 reloadable = true
 
 [libraries]
+; Desktop
 linux.debug.x86_64 = "res://../bin/libmyextension.so"
 linux.release.x86_64 = "res://../bin/libmyextension.so"
 windows.debug.x86_64 = "res://../bin/myextension.dll"
 windows.release.x86_64 = "res://../bin/myextension.dll"
 macos.debug = "res://../bin/libmyextension.dylib"
 macos.release = "res://../bin/libmyextension.dylib"
+
+; Android
+android.debug.arm64 = "res://../bin/android/arm64-v8a/libmyextension.so"
+android.release.arm64 = "res://../bin/android/arm64-v8a/libmyextension.so"
+android.debug.arm32 = "res://../bin/android/armeabi-v7a/libmyextension.so"
+android.release.arm32 = "res://../bin/android/armeabi-v7a/libmyextension.so"
+android.debug.x86_64 = "res://../bin/android/x86_64/libmyextension.so"
+android.release.x86_64 = "res://../bin/android/x86_64/libmyextension.so"
+
+; iOS
+ios.debug = "res://../bin/ios/libmyextension.dylib"
+ios.release = "res://../bin/ios/libmyextension.dylib"

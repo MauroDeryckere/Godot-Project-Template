@@ -14,17 +14,27 @@ target_link_libraries(myextension PRIVATE
     godot-cpp
 )
 
+# Determine output directory based on platform
+if(ANDROID)
+    set(BIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/godot/bin/android/${ANDROID_ABI})
+elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set(BIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/godot/bin/ios)
+else()
+    set(BIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/godot/bin)
+endif()
+
 # Output directly to Godot project
 add_custom_command(TARGET myextension POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${BIN_OUTPUT_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     $<TARGET_FILE:myextension>
-    ${PROJECT_SOURCE_DIR}/godot/bin/
+    ${BIN_OUTPUT_DIR}/
 )
 
 if(WIN32)
     add_custom_command(TARGET myextension POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_PDB_FILE:myextension>
-        ${PROJECT_SOURCE_DIR}/godot/bin/
+        ${BIN_OUTPUT_DIR}/
     )
 endif()
