@@ -18,6 +18,10 @@ config/name="Project"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[dotnet]
+
+project/assembly_name="Project"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"
