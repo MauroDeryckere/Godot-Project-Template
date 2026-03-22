@@ -5,6 +5,23 @@ name: CI
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "cpp/**"
+      - "tests/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
+      - "third_party/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "cpp/**"
+      - "tests/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
+      - "third_party/**"
+      - ".github/workflows/ci.yml"
 
 permissions:
   contents: read
@@ -32,6 +49,9 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Set up sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Cache godot-cpp build
         uses: actions/cache@v5
         with:
@@ -39,7 +59,7 @@ jobs:
           key: godot-cpp-${{ matrix.os }}-${{ matrix.build_type }}-${{ hashFiles('third_party/godot-cpp/**') }}
 
       - name: Configure
-        run: cmake --preset ${{ matrix.build_type == 'Debug' && 'debug' || 'release' }} -DBUILD_TESTS=ON
+        run: cmake --preset ${{ matrix.build_type == 'Debug' && 'debug' || 'release' }} -DBUILD_TESTS=ON -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build
         run: cmake --build --preset ${{ matrix.build_type == 'Debug' && 'debug' || 'release' }}
@@ -61,6 +81,9 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Set up sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Cache godot-cpp build
         uses: actions/cache@v5
         with:
@@ -68,7 +91,7 @@ jobs:
           key: godot-cpp-android-${{ matrix.abi }}-${{ hashFiles('third_party/godot-cpp/**') }}
 
       - name: Configure
-        run: cmake --preset android-${{ matrix.abi }}
+        run: cmake --preset android-${{ matrix.abi }} -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build
         run: cmake --build --preset android-${{ matrix.abi }}
@@ -83,6 +106,9 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Set up sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Cache godot-cpp build
         uses: actions/cache@v5
         with:
@@ -90,7 +116,7 @@ jobs:
           key: godot-cpp-ios-${{ hashFiles('third_party/godot-cpp/**') }}
 
       - name: Configure
-        run: cmake --preset ios
+        run: cmake --preset ios -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build
         run: cmake --build --preset ios
