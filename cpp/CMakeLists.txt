@@ -21,6 +21,12 @@ target_link_libraries(myextension PRIVATE
 get_target_property(GODOT_CPP_INCLUDE_DIRS godot-cpp INTERFACE_INCLUDE_DIRECTORIES)
 target_include_directories(myextension SYSTEM PRIVATE ${GODOT_CPP_INCLUDE_DIRS})
 
+# Compile class documentation into the extension (shows in Godot's built-in help)
+file(GLOB_RECURSE DOC_XML CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc_classes/*.xml)
+if(DOC_XML)
+    target_doc_sources(myextension "${DOC_XML}")
+endif()
+
 # Use godot-cpp suffix for output naming (e.g. myextension.linux.template_debug.x86_64.so)
 get_target_property(GODOTCPP_SUFFIX godot-cpp GODOTCPP_SUFFIX)
 
