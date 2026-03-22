@@ -77,7 +77,14 @@ jobs:
 
       - name: Validate extension loads
         if: matrix.build_type == 'Debug'
-        run: godot --headless --path godot/project --import --verbose 2>&1
+        shell: bash
+        run: |
+          OUTPUT=$(godot --headless --path godot/project --quit --verbose 2>&1 || true)
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q "GDExtension entry point.*not found"; then
+            echo "::error::Extension failed to load"
+            exit 1
+          fi
 
   android:
     name: Android (${{ matrix.abi }})
