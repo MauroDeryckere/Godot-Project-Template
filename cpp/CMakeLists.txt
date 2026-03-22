@@ -1,31 +1,38 @@
 file(GLOB_RECURSE SRC CONFIGURE_DEPENDS src/*.cpp)
 
-add_library(myextension SHARED ${SRC})
+add_library(${EXTENSION_NAME} SHARED ${SRC})
 
-target_compile_features(myextension PRIVATE cxx_std_20)
+target_compile_features(${EXTENSION_NAME} PRIVATE cxx_std_20)
 
-target_compile_options(myextension PRIVATE
+target_compile_options(${EXTENSION_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
 )
 
-target_include_directories(myextension PRIVATE
+target_include_directories(${EXTENSION_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(myextension PRIVATE
+target_link_libraries(${EXTENSION_NAME} PRIVATE
     godot-cpp
 )
 
 # Suppress warnings from godot-cpp headers
 get_target_property(GODOT_CPP_INCLUDE_DIRS godot-cpp INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(myextension SYSTEM PRIVATE ${GODOT_CPP_INCLUDE_DIRS})
+target_include_directories(${EXTENSION_NAME} SYSTEM PRIVATE ${GODOT_CPP_INCLUDE_DIRS})
 
 # Compile class documentation into the extension (shows in Godot's built-in help)
 file(GLOB_RECURSE DOC_XML CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc_classes/*.xml)
 if(DOC_XML)
-    target_doc_sources(myextension "${DOC_XML}")
+    target_doc_sources(${EXTENSION_NAME} "${DOC_XML}")
 endif()
+
+# Generate .gdextension file from template
+configure_file(
+    ${PROJECT_SOURCE_DIR}/godot/project/extension.gdextension.in
+    ${PROJECT_SOURCE_DIR}/godot/project/${EXTENSION_NAME}.gdextension
+    @ONLY
+)
 
 # Use godot-cpp suffix for output naming (e.g. myextension.linux.template_debug.x86_64.so)
 get_target_property(GODOTCPP_SUFFIX godot-cpp GODOTCPP_SUFFIX)
@@ -39,14 +46,14 @@ else()
     set(BIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/godot/bin)
 endif()
 
-set_target_properties(myextension PROPERTIES
+set_target_properties(${EXTENSION_NAME} PROPERTIES
     CXX_EXTENSIONS OFF
     POSITION_INDEPENDENT_CODE ON
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON
 
     PREFIX "lib"
-    OUTPUT_NAME "myextension${GODOTCPP_SUFFIX}"
+    OUTPUT_NAME "${EXTENSION_NAME}${GODOTCPP_SUFFIX}"
 
     LIBRARY_OUTPUT_DIRECTORY "$<1:${BIN_OUTPUT_DIR}>"
     RUNTIME_OUTPUT_DIRECTORY "$<1:${BIN_OUTPUT_DIR}>"
@@ -54,7 +61,7 @@ set_target_properties(myextension PROPERTIES
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    set_target_properties(myextension PROPERTIES
+    set_target_properties(${EXTENSION_NAME} PROPERTIES
         XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
     )
 endif()

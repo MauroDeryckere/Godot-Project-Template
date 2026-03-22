@@ -2,6 +2,8 @@
 .godot/
 .nomedia
 *.uid
+# Generated from extension.gdextension.in by CMake
+*.gdextension
 
 # Godot-specific ignores
 .import/

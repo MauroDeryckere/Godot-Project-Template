@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(GodotCppTemplate)
 
+set(EXTENSION_NAME "myextension" CACHE STRING "Name of the GDExtension library")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Use ccache/sccache if available (speeds up local rebuilds)
