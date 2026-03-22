@@ -3,26 +3,15 @@ file(GLOB_RECURSE SRC CONFIGURE_DEPENDS src/*.cpp)
 add_library(myextension SHARED ${SRC})
 
 target_compile_features(myextension PRIVATE cxx_std_20)
-set_target_properties(myextension PROPERTIES
-    CXX_EXTENSIONS OFF
-    POSITION_INDEPENDENT_CODE ON
-    CXX_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN ON
-)
 
 target_compile_options(myextension PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
 )
 
-if(WIN32)
-    set_target_properties(myextension PROPERTIES PREFIX "")
-endif()
-
 target_include_directories(myextension PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-
 
 target_link_libraries(myextension PRIVATE
     godot-cpp
@@ -32,11 +21,8 @@ target_link_libraries(myextension PRIVATE
 get_target_property(GODOT_CPP_INCLUDE_DIRS godot-cpp INTERFACE_INCLUDE_DIRECTORIES)
 target_include_directories(myextension SYSTEM PRIVATE ${GODOT_CPP_INCLUDE_DIRS})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    set_target_properties(myextension PROPERTIES
-        XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
-    )
-endif()
+# Use godot-cpp suffix for output naming (e.g. myextension.linux.template_debug.x86_64.so)
+get_target_property(GODOTCPP_SUFFIX godot-cpp GODOTCPP_SUFFIX)
 
 # Determine output directory based on platform
 if(ANDROID)
@@ -47,18 +33,22 @@ else()
     set(BIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/godot/bin)
 endif()
 
-# Output directly to Godot project
-add_custom_command(TARGET myextension POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${BIN_OUTPUT_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:myextension>
-    ${BIN_OUTPUT_DIR}/
+set_target_properties(myextension PROPERTIES
+    CXX_EXTENSIONS OFF
+    POSITION_INDEPENDENT_CODE ON
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+
+    PREFIX "lib"
+    OUTPUT_NAME "myextension${GODOTCPP_SUFFIX}"
+
+    LIBRARY_OUTPUT_DIRECTORY "$<1:${BIN_OUTPUT_DIR}>"
+    RUNTIME_OUTPUT_DIRECTORY "$<1:${BIN_OUTPUT_DIR}>"
+    PDB_OUTPUT_DIRECTORY "$<1:${BIN_OUTPUT_DIR}>"
 )
 
-if(MSVC)
-    add_custom_command(TARGET myextension POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_PDB_FILE:myextension>
-        ${BIN_OUTPUT_DIR}/
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set_target_properties(myextension PROPERTIES
+        XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
     )
 endif()
