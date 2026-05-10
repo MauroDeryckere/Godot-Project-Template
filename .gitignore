@@ -1,8 +1,10 @@
 # Godot 4+ specific ignores
 .godot/
 .nomedia
-# Generated from extension.gdextension.in by CMake (plus its companion .uid)
-*.gdextension
+# Generated from extension.gdextension.in by CMake (plus its companion .uid).
+# Named explicitly so third-party addons (e.g. godotsteam) that ship their
+# own .gdextension are still tracked.
+myextension.gdextension
 myextension.gdextension.uid
 
 # Godot-specific ignores
