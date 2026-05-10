@@ -1,10 +1,63 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
 
-# Binary files
+# Godot text formats - ensure LF
+*.gd text eol=lf
+*.tscn text eol=lf
+*.tres text eol=lf
+*.cfg text eol=lf
+*.gdextension text eol=lf
+*.godot text eol=lf
+*.import text eol=lf
+
+# C++ source
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.h text eol=lf
+
+# Build system
+CMakeLists.txt text eol=lf
+*.cmake text eol=lf
+
+# Binary files (not LFS - these are gitignored build outputs)
 *.dll binary
 *.lib binary
 *.exp binary
 *.pdb binary
 *.so binary
 *.dylib binary
+
+# === Git LFS ===
+
+# Images
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.bmp filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.webp filter=lfs diff=lfs merge=lfs -text
+
+# Audio
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+
+# Spine
+*.spine filter=lfs diff=lfs merge=lfs -text
+*.skel filter=lfs diff=lfs merge=lfs -text
+*.atlas filter=lfs diff=lfs merge=lfs -text
+
+# Fonts
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
+*.woff filter=lfs diff=lfs merge=lfs -text
+*.woff2 filter=lfs diff=lfs merge=lfs -text
+
+# Video
+*.ogv filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+
+# Godot binary formats
+*.scn filter=lfs diff=lfs merge=lfs -text
+*.res filter=lfs diff=lfs merge=lfs -text
