@@ -79,6 +79,31 @@ def clean_generated_gdextension(old_name: str) -> None:
                 print(f"  Removed {os.path.relpath(filepath, PROJECT_ROOT)}")
 
 
+def update_gitignore_uid(old_name: str, new_name: str) -> None:
+    """Rewrite the `<name>.gdextension.uid` line in .gitignore."""
+    gitignore = os.path.join(PROJECT_ROOT, ".gitignore")
+    if not os.path.isfile(gitignore):
+        return
+
+    with open(gitignore, "r") as f:
+        content = f.read()
+
+    old_line = f"{old_name}.gdextension.uid"
+    new_line = f"{new_name}.gdextension.uid"
+
+    if old_line in content:
+        updated = content.replace(old_line, new_line)
+    elif new_line not in content:
+        # Append under the gdextension entry if missing entirely.
+        updated = content.rstrip() + f"\n{new_line}\n"
+    else:
+        return
+
+    with open(gitignore, "w") as f:
+        f.write(updated)
+    print(f"  Updated .gitignore (.uid entry -> {new_line})")
+
+
 def main() -> None:
     if len(sys.argv) != 3:
         print(__doc__)
@@ -117,6 +142,9 @@ def main() -> None:
 
     # Remove generated .gdextension files
     clean_generated_gdextension(old_name)
+
+    # Keep the .gitignore .uid entry in sync with the new name.
+    update_gitignore_uid(old_name, new_name)
 
     if not found_anything:
         print(f"  No references to '{old_name}' found. Is the name correct?")
