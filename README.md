@@ -64,6 +64,16 @@ Built binaries are output to `godot/bin/` with platform and build type suffixes 
 
 Open `godot/project/project.godot` in the Godot editor.
 
+## Optional: Steam integration
+
+If you're shipping on Steam, install the [GodotSteam GDExtension](https://godotsteam.com/) addon with:
+
+```bash
+python tools/install_godotsteam.py
+```
+
+This downloads the latest release into `godot/project/addons/godotsteam/` and writes a placeholder `steam_appid.txt` (480 = Spacewar, Steam's free test app). Enable the plugin in **Project Settings > Plugins** and replace the app id before shipping. Pass `--version 4.18.1` to pin a specific release or `--force` to reinstall.
+
 ## Testing
 
 ```bash
@@ -90,7 +100,8 @@ Tests use [Catch2](https://github.com/catchorg/Catch2) and cover pure C++ code (
 ├── third_party/godot-cpp/         Godot C++ bindings (submodule)
 ├── tools/
 │   ├── rename_extension.py        Rename the GDExtension throughout the project
-│   └── rename_project.py          Rename the Godot project
+│   ├── rename_project.py          Rename the Godot project
+│   └── install_godotsteam.py      Optional: install the GodotSteam GDExtension addon
 ├── CMakeLists.txt                 Top-level CMake configuration (EXTENSION_NAME defined here)
 └── CMakePresets.json              Build presets (desktop, mobile, debug + release)
 ```
