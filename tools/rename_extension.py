@@ -79,8 +79,13 @@ def clean_generated_gdextension(old_name: str) -> None:
                 print(f"  Removed {os.path.relpath(filepath, PROJECT_ROOT)}")
 
 
-def update_gitignore_uid(old_name: str, new_name: str) -> None:
-    """Rewrite the `<name>.gdextension.uid` line in .gitignore."""
+def update_gitignore_entries(old_name: str, new_name: str) -> None:
+    """Rewrite the `<name>.gdextension` and `<name>.gdextension.uid` lines.
+
+    Both are ignored explicitly (instead of via `*.gdextension`) so that
+    third-party addons shipping their own .gdextension are tracked. When
+    the extension is renamed those entries must follow.
+    """
     gitignore = os.path.join(PROJECT_ROOT, ".gitignore")
     if not os.path.isfile(gitignore):
         return
@@ -88,20 +93,21 @@ def update_gitignore_uid(old_name: str, new_name: str) -> None:
     with open(gitignore, "r") as f:
         content = f.read()
 
-    old_line = f"{old_name}.gdextension.uid"
-    new_line = f"{new_name}.gdextension.uid"
+    updated = content
+    for suffix in (".gdextension.uid", ".gdextension"):
+        old_line = f"{old_name}{suffix}"
+        new_line = f"{new_name}{suffix}"
+        if old_line in updated:
+            updated = updated.replace(old_line, new_line)
+        elif new_line not in updated:
+            updated = updated.rstrip() + f"\n{new_line}\n"
 
-    if old_line in content:
-        updated = content.replace(old_line, new_line)
-    elif new_line not in content:
-        # Append under the gdextension entry if missing entirely.
-        updated = content.rstrip() + f"\n{new_line}\n"
-    else:
+    if updated == content:
         return
 
     with open(gitignore, "w") as f:
         f.write(updated)
-    print(f"  Updated .gitignore (.uid entry -> {new_line})")
+    print("  Updated .gitignore (.gdextension + .uid entries)")
 
 
 def main() -> None:
@@ -143,8 +149,8 @@ def main() -> None:
     # Remove generated .gdextension files
     clean_generated_gdextension(old_name)
 
-    # Keep the .gitignore .uid entry in sync with the new name.
-    update_gitignore_uid(old_name, new_name)
+    # Keep the .gitignore .gdextension/.uid entries in sync with the new name.
+    update_gitignore_entries(old_name, new_name)
 
     if not found_anything:
         print(f"  No references to '{old_name}' found. Is the name correct?")
