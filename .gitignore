@@ -1,9 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 .nomedia
-*.uid
-# Generated from extension.gdextension.in by CMake
+# Generated from extension.gdextension.in by CMake (plus its companion .uid)
 *.gdextension
+myextension.gdextension.uid
 
 # Godot-specific ignores
 .import/
@@ -45,6 +45,12 @@ CMakeFiles/
 # OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
 
 # CMake compile database
 compile_commands.json
