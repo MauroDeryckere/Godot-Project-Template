@@ -18,6 +18,17 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical (crash, data loss, cannot progress)
+        - Major (gameplay-breaking, bad visual glitch, input not working)
+        - Minor (visual polish, typo, slight imbalance, edge case)
+    validations:
+      required: true
+
   - type: input
     id: godot-version
     attributes:
@@ -42,5 +53,6 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Relevant logs
+      label: Relevant logs / screenshots
+      description: Paste crash logs or attach screenshots.
       render: text
