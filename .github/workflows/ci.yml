@@ -10,6 +10,8 @@ on:
     paths:
       - "cpp/**"
       - "tests/**"
+      - "godot/project/**/*.gd"
+      - "godot/project/tests/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
       - "third_party/**"
@@ -18,6 +20,8 @@ on:
     paths:
       - "cpp/**"
       - "tests/**"
+      - "godot/project/**/*.gd"
+      - "godot/project/tests/**"
       - "CMakeLists.txt"
       - "CMakePresets.json"
       - "third_party/**"
